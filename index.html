@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nonna's Kitchen - Receitas Italianas Autênticas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c5530;
+            --secondary-color: #dc2626;
+            --accent-color: #f9fafb;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #fef7ed 0%, #fefce8 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1e3a20 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fbbf24;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #fbbf24;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+            padding: 2rem 0;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(44, 85, 48, 0.8), rgba(44, 85, 48, 0.8)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23dc2626" width="1200" height="600"/><circle fill="%232c5530" cx="200" cy="150" r="80"/><circle fill="%23fbbf24" cx="800" cy="300" r="60"/><circle fill="%23059669" cx="400" cy="450" r="70"/></svg>');
+            color: white;
+            text-align: center;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+            border-radius: 15px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Recipe Cards */
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .recipe-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .recipe-header {
+            background: linear-gradient(135deg, var(--secondary-color), #b91c1c);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .recipe-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe-content {
+            padding: 1.5rem;
+        }
+
+        .recipe-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .recipe-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .recipe-section ul {
+            padding-left: 1.5rem;
+        }
+
+        .recipe-section li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* Locked Recipe */
+        .recipe-locked {
+            position: relative;
+            opacity: 0.7;
+        }
+
+        .recipe-locked .recipe-content {
+            filter: blur(3px);
+            pointer-events: none;
+        }
+
+        .recipe-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .price-tag {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .buy-btn {
+            background: #fbbf24;
+            color: var(--text-dark);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .buy-btn:hover {
+            background: #f59e0b;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .submit-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #1e3a20;
+        }
+
+        /* About Section */
+        .about-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .about-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .about-content p {
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .recipes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">🍝 Nonna's Kitchen</div>
+                <nav>
+                    <ul>
+                        <li><a href="#" onclick="showPage('home')">Home</a></li>
+                        <li><a href="#" onclick="showPage('about')">Saiba Mais</a></li>
+                        <li><a href="#" onclick="showPage('contact')">Contato</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- HOME PAGE -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <h1>Bem-vindo à Nonna's Kitchen</h1>
+                <p>Descubra os segredos da culinária italiana tradicional com receitas autênticas passadas de geração em geração</p>
+            </div>
+
+            <div class="recipes-grid">
+                <!-- Free Recipe 1 -->
+                <div class="recipe-card">
+                    <div class="recipe-header">
+                        <h3>🍝 Spaghetti Carbonara</h3>
+                        <p>Receita tradicional de Roma</p>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-section">
+                            <h4>Ingredientes:</h4>
+                            <ul>
+                                <li>400g de spaghetti</li>
+                                <li>200g de guanciale (ou bacon)</li>
+                                <li>4 ovos inteiros</li>
+                                <li>100g de queijo pecorino romano ralado</li>
+                                <li>Pimenta preta moída na hora</li>
+                                <li>Sal a gosto</li>
+                            </ul>
+                        </div>
+                        <div class="recipe-section">
+                            <h4>Modo de Preparo:</h4>
+                            <ol>
+                                <li>Corte o guanciale em cubos pequenos e frite até ficar dourado</li>
+                                <li>Cozinhe o spaghetti em água salgada até ficar al dente</li>
+                                <li>Misture os ovos com o queijo pecorino e pimenta preta</li>
+                                <li>Escorra a massa e misture com o guanciale</li>
+                                <li>Adicione a mistura de ovos e queijo, mexendo rapidamente</li>
+                                <li>Sirva imediatamente com mais queijo e pimenta</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Free Recipe 2 -->
+                <div class="recipe-card">
+                    <div class="recipe-header">
+                        <h3>🍕 Pizza Margherita</h3>
+                        <p>A clássica pizza napolitana</p>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-section">
+                            <h4>Ingredientes:</h4>
+                            <ul>
+                                <li>300g de farinha tipo 00</li>
+                                <li>200ml de água morna</li>
+                                <li>7g de fermento biológico seco</li>
+                                <li>1 colher de chá de sal</li>
+                                <li>2 colheres de sopa de azeite extra virgem</li>
+                                <li>400g de molho de tomate San Marzano</li>
+                                <li>250g de mozzarella di bufala</li>
+                                <li>Folhas de manjericão fresco</li>
+                            </ul>
+                        </div>
+                        <div class="recipe-section">
+                            <h4>Modo de Preparo:</h4>
+                            <ol>
+                                <li>Misture a farinha, sal e fermento em uma tigela</li>
+                                <li>Adicione água e azeite, amasse por 10 minutos</li>
+                                <li>Deixe descansar por 2 horas em local aquecido</li>
+                                <li>Abra a massa em formato circular</li>
+                                <li>Espalhe o molho de tomate, mozzarella e manjericão</li>
+                                <li>Asse em forno muito quente (250°C) por 8-10 minutos</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Free Recipe 3 -->
+                <div class="recipe-card">
+                    <div class="recipe-header">
+                        <h3>🥘 Risotto alla Milanese</h3>
+                        <p>O famoso risotto com açafrão</p>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-section">
+                            <h4>Ingredientes:</h4>
+                            <ul>
+                                <li>320g de arroz arbóreo</li>
+                                <li>1 litro de caldo de carne quente</li>
+                                <li>1 cebola pequena picada</li>
+                                <li>100ml de vinho branco seco</li>
+                                <li>0,5g de açafrão em pó</li>
+                                <li>80g de manteiga</li>
+                                <li>100g de queijo parmesão ralado</li>
+                                <li>Sal e pimenta a gosto</li>
+                            </ul>
+                        </div>
+                        <div class="recipe-section">
+                            <h4>Modo de Preparo:</h4>
+                            <ol>
+                                <li>Refogue a cebola na manteiga até ficar transparente</li>
+                                <li>Adicione o arroz e refogue por 2 minutos</li>
+                                <li>Adicione o vinho e deixe evaporar</li>
+                                <li>Adicione o caldo quente aos poucos, mexendo sempre</li>
+                                <li>Incorpore o açafrão nos últimos 5 minutos</li>
+                                <li>Finalize com manteiga e parmesão</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Locked Recipe 1 -->
+                <div class="recipe-card recipe-locked">
+                    <div class="recipe-header">
+                        <h3>🍖 Osso Buco alla Milanese</h3>
+                        <p>Receita secreta da família</p>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-section">
+                            <h4>Ingredientes:</h4>
+                            <ul>
+                                <li>4 fatias de osso buco</li>
+                                <li>Farinha de trigo</li>
+                                <li>Cebola, cenoura e aipo</li>
+                                <li>Vinho branco</li>
+                                <li>Tomates pelados</li>
+                                <li>Caldo de carne</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="recipe-overlay">
+                        <div class="price-tag">€15,00</div>
+                        <p>Desbloqueie a receita completa com todos os segredos da Nonna!</p>
+                        <button class="buy-btn" onclick="buyRecipe('Osso Buco alla Milanese')">Comprar Receita</button>
+                    </div>
+                </div>
+
+                <!-- Locked Recipe 2 -->
+                <div class="recipe-card recipe-locked">
+                    <div class="recipe-header">
+                        <h3>🍰 Tiramisu Tradizionale</h3>
+                        <p>A sobremesa mais amada da Itália</p>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-section">
+                            <h4>Ingredientes:</h4>
+                            <ul>
+                                <li>Biscoitos savoiardi</li>
+                                <li>Mascarpone</li>
+                                <li>Ovos frescos</li>
+                                <li>Açúcar</li>
+                                <li>Café espresso forte</li>
+                                <li>Cacau em pó</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="recipe-overlay">
+                        <div class="price-tag">€15,00</div>
+                        <p>Descubra o segredo do Tiramisu perfeito!</p>
+                        <button class="buy-btn" onclick="buyRecipe('Tiramisu Tradizionale')">Comprar Receita</button>
+                    </div>
+                </div>
+
+                <!-- Locked Recipe 3 -->
+                <div class="recipe-card recipe-locked">
+                    <div class="recipe-header">
+                        <h3>🐟 Branzino in Crosta di Sale</h3>
+                        <p>Peixe assado na crosta de sal</p>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-section">
+                            <h4>Ingredientes:</h4>
+                            <ul>
+                                <li>1 branzino inteiro</li>
+                                <li>Sal grosso</li>
+                                <li>Claras de ovo</li>
+                                <li>Ervas aromáticas</li>
+                                <li>Azeite extra virgem</li>
+                                <li>Limão siciliano</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="recipe-overlay">
+                        <div class="price-tag">€15,00</div>
+                        <p>Aprenda a técnica tradicional siciliana!</p>
+                        <button class="buy-btn" onclick="buyRecipe('Branzino in Crosta di Sale')">Comprar Receita</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABOUT PAGE -->
+        <div id="about" class="page">
+            <div class="about-content">
+                <h2>Nossa História</h2>
+                <p>A Nonna's Kitchen nasceu do amor pela culinária italiana tradicional, preservando receitas centenárias que foram passadas de geração em geração na família Rossi, originária da região da Toscana.</p>
+                
+                <p>Desde 1892, nossa família tem se dedicado a manter viva a tradição culinária italiana, coletando receitas secretas de diferentes regiões da Itália. Cada prato conta uma história, cada ingrediente carrega a essência da terra italiana.</p>
+                
+                <p>Nossa missão é compartilhar esses tesouros gastronômicos com o mundo, oferecendo não apenas receitas, mas toda a cultura e tradição que envolvem a verdadeira culinária italiana.</p>
+                
+                <h2>O que Oferecemos</h2>
+                <p>Disponibilizamos receitas gratuitas para você conhecer nosso trabalho, além de receitas exclusivas e secretas que foram cuidadosamente documentadas durante décadas de pesquisa culinária.</p>
+                
+                <p>Cada receita premium inclui técnicas especiais, ingredientes secretos e dicas que fazem toda a diferença no resultado final. São receitas que você não encontrará em nenhum outro lugar.</p>
+            </div>
+
+            <div class="contact-form">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">Formulário de Contato</h2>
+                <form onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <label for="name">Nome Completo</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Assunto</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Mensagem</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Enviar Mensagem</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- CONTACT PAGE -->
+        <div id="contact" class="page">
+            <div class="about-content">
+                <h2>Entre em Contato</h2>
+                <p>Estamos sempre prontos para ajudar você em sua jornada culinária italiana. Entre em contato conosco através dos canais abaixo:</p>
+                
+                <div style="margin: 2rem 0;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📍 Endereço</h3>
+                    <p>Via Roma, 123<br>50100 Firenze, Toscana<br>Itália</p>
+                </div>
+                
+                <div style="margin: 2rem 0;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📧 E-mail</h3>
+                    <p>contato@nonnaskitchen.it<br>vendas@nonnaskitchen.it</p>
+                </div>
+                
+                <div style="margin: 2rem 0;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📞 Telefone</h3>
+                    <p>+39 055 123 4567<br>WhatsApp: +39 335 987 6543</p>
+                </div>
+                
+                <div style="margin: 2rem 0;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">🕒 Horário de Atendimento</h3>
+                    <p>Segunda a Sexta: 9h às 18h<br>Sábado: 9h às 14h<br>Domingo: Fechado</p>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">Envie sua Mensagem</h2>
+                <form onsubmit="submitContactForm(event)">
+                    <div class="form-group">
+                        <label for="contact-name">Nome Completo</label>
+                        <input type="text" id="contact-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">E-mail</label>
+                        <input type="email" id="contact-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-phone">Telefone</label>
+                        <input type="tel" id="contact-phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-subject">Assunto</label>
+                        <input type="text" id="contact-subject" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Mensagem</label>
+                        <textarea id="contact-message" name="message" rows="6" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Enviar Mensagem</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Nonna's Kitchen. Todos os direitos reservados. | Receitas tradicionais italianas desde 1892</p>
+        </div>
+    </footer>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function buyRecipe(recipeName) {
+            alert(`Redirecionando para o pagamento da receita "${recipeName}" - €15,00\n\nEm um site real, isso redirecionaria para um gateway de pagamento como PayPal, Stripe ou similar.`);
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            alert(`Formulário enviado com sucesso!\n\nDados recebidos:\nNome: ${data.name}\nE-mail: ${data.email}\nAssunto: ${data.subject}\nMensagem: ${data.message}`);
+            
+            // Reset form
+            event.target.reset();
+        }
+
+        function submitContactForm(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            alert(`Mensagem enviada com sucesso!\n\nEntraremos em contato em breve.\n\nObrigado pelo seu interesse, ${data.name}!`);
+            
+            // Reset form
+            event.target.reset();
+        }
+    </script>
+</body>
+</html>
