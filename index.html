@@ -732,17 +732,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
 
         function addToCart(recipeName, price) {
+            // 1 - Adiciona no array do carrinho
             cart.push({ name: recipeName, price: price });
             cartTotal += price;
+            // 2 - Atualiza a exibicao do carrinho
             updateCartDisplay();
             
-            // Animation feedback
+            // 3 - Animation feedback
             const cartBtn = document.querySelector('.cart-btn');
             cartBtn.style.transform = 'scale(1.1)';
             setTimeout(() => {
                 cartBtn.style.transform = 'scale(1)';
             }, 200);
-        }
+            // 4 - Envia o evento ao google tag manager via datalayer
+            window.dataLayer = window.dataLayer || []; //Garante que o dataLayer exista
+            window.dataLayer.push({
+                event: 'add_to_cart', //nome do evento
+                ecommerce: {
+                    currency: 'BRL',
+                    valur: price,
+                    items:[{
+                        item_id: recipeName.replace(/\s+/g, '-').toLowerCase(), //Id ficticio baseado no nome
+                        item_name:recipeName,
+                        quantity:1,
+                        price: price
+                        }]
+                    }
+                });
+            }
 
         function updateCartDisplay() {
             const cartCount = document.getElementById('cartCount');
