@@ -750,7 +750,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 event: 'add_to_cart', //nome do evento
                 ecommerce: {
                     currency: 'BRL',
-                    valur: price,
+                    value: price,
                     items:[{
                         item_id: recipeName.replace(/\s+/g, '-').toLowerCase(), //Id ficticio baseado no nome
                         item_name:recipeName,
@@ -811,17 +811,53 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             openCart(); // Refresh cart display
         }
 
+    
+
         function showCheckout() {
             document.getElementById('checkoutForm').style.display = 'block';
             document.getElementById('checkoutBtn').style.display = 'none';
+
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'begin_checkout',
+                ecommerce: {
+                currency: 'BRL',
+                value: cartTotal,
+                items: cart.map(item => ({
+                    item_id: item.name.replace(/\s+/g, '-').toLowerCase(),
+                    item_name: item.name,
+                    quantity: 1,
+                    price: item.price
+            }))
+        }
+    });
+            
+        
         }
 
         function processPayment() {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+            event: 'purchase',
+            ecommerce: {
+            currency: 'BRL',
+            transaction_id: 'txn_' + Date.now(), // ID único da transação
+            value: cartTotal,
+            items: cart.map(item => ({
+                item_id: item.name.replace(/\s+/g, '-').toLowerCase(),
+                item_name: item.name,
+                quantity: 1,
+                price: item.price
+            }))
+        }
+    });
             alert('Pagamento processado com sucesso! Você receberá as receitas por email.');
             cart = [];
             cartTotal = 0;
             updateCartDisplay();
             closeCart();
+
+
         }
 
         // Form submissions
