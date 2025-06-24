@@ -865,6 +865,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             e.preventDefault();
             document.getElementById('newsletterSuccess').style.display = 'block';
             this.reset();
+            // Capturar dados
+            const formData = new FormData(this);
+            const name = formData.get('name');
+            const email = formData.get('email');
+
+        // Enviar para GTM
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: 'lead_submission',
+            form_type: 'newsletter',
+            user_email: email,
+            user_name: name
+        });
             setTimeout(() => {
                 document.getElementById('newsletterSuccess').style.display = 'none';
             }, 5000);
@@ -874,6 +887,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             e.preventDefault();
             document.getElementById('contactSuccess').style.display = 'block';
             this.reset();
+            // Capturar dados
+            const formData = new FormData(this);
+            const fullname = formData.get('fullname');  // nome completo
+            const email = formData.get('email');        // email
+            const phone = formData.get('phone');        // telefone
+            const subject = formData.get('subject');    // assunto
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: 'lead_submission',
+            form_type: 'contact',           // 'contact', não 'contactForm'
+            user_name: fullname,            // nome
+            user_email: email,              // email (muito importante!)
+            user_phone: phone,              // telefone
+            user_subject: subject           // assunto
+        });
+            
             setTimeout(() => {
                 document.getElementById('contactSuccess').style.display = 'none';
             }, 5000);
